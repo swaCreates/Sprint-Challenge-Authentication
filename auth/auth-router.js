@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const db= require('./auth-model.js');
 const bcrypt= require('bcryptjs');
+const authenticate = require('./authenticate-middleware.js');
 
 router.post('/register', async (req, res, next) => {
   // implement registration
@@ -91,6 +92,22 @@ router.post('/login', async (req, res, next) => {
     console.log('Login:', err)
     next(err);
   };
+});
+
+router.get('/logout', authenticate(), async (req, res, next) => {
+  // this will delete the session in the database and try to expire the cookie,
+  // though it's ultimately up to the client if they delete the cookie or not.
+  // but it becomes useless to them once the session is deleted server-side.
+  
+  req.session.destroy(err => {
+      if(err){
+          next(err);
+      } else{
+          res.json({
+              success_message: 'You have logged out.',
+          });
+      };
+  });
 });
 
 module.exports = router;

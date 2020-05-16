@@ -13,7 +13,7 @@ module.exports= function auth(){
         return res.status(401).json(authError);
       } else{
         next();
-      }
+      };
     } catch (err) {
       console.log('Auth Session:', err);
       next(err);
